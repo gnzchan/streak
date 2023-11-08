@@ -37,7 +37,7 @@ export const searchArtist = async (
 
 export const getTopTracksByArtist = async (
   artistId: string
-): Promise<SearchTracks> => {
+): Promise<TopTracks> => {
   const { access_token } = await getAccessToken();
 
   // TODO: Market should be based on where app is ran.

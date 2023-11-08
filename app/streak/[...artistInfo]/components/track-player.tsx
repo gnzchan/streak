@@ -5,8 +5,6 @@ interface TrackPlayerProps {
 }
 
 export const TrackPlayer = ({ track }: TrackPlayerProps) => {
-  //   const [];
-
   useEffect(() => {}, []);
 
   return (

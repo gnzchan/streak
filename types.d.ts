@@ -124,7 +124,7 @@ type Track = {
   //  true;
   name: string;
   // "Perfect";
-  popularity: string;
+  popularity: number;
   // 90;
   preview_url: string;
   // "https://p.scdn.co/mp3-preview/4e30857a3c7da3f8891483643e310bb233afadd2?cid=7e8e3e3b29bc461f9edf910e780581ae";
@@ -142,4 +142,8 @@ type SearchTracks = {
   tracks: {
     items: Track[];
   };
+};
+
+type TopTracks = {
+  tracks: Track[];
 };

@@ -12,7 +12,6 @@ export const TrackContainer = ({ tracks }: TrackContainerProps) => {
   const [start, setStart] = useState(false);
 
   useEffect(() => {
-    // console.log(tracks);
     const randomTrack = getRandomSongFromTracks();
     setCurrentTrack(randomTrack);
   }, []);
@@ -31,9 +30,9 @@ export const TrackContainer = ({ tracks }: TrackContainerProps) => {
 
   return (
     <div className="flex flex-col">
-      {/* {tracks.map((t) => (
+      {tracks.map((t) => (
         <div key={t.id}>{t.name}</div>
-      ))} */}
+      ))}
       <button onClick={() => setStart(true)}>Start</button>
       {start && currentTrack && <TrackPlayer track={currentTrack} />}
     </div>
