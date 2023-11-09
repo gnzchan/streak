@@ -1,21 +1,24 @@
-export const getAccessToken = async () => {
-  const refresh_token = process.env.NEXT_PUBLIC_SPOTIFY_REFRESH_TOKEN ?? "";
+import { concatenateTracks, getPopularTracks } from "./utils";
 
-  const response = await fetch("https://accounts.spotify.com/api/token", {
+export const getAccessToken = async () => {
+  const client_id = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID ?? "";
+  const client_secret = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET ?? "";
+
+  const res = await fetch("https://accounts.spotify.com/api/token", {
     method: "POST",
-    headers: {
-      Authorization: `Basic ${Buffer.from(
-        `${process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID}:${process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET}`
-      ).toString("base64")}`,
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
     body: new URLSearchParams({
-      grant_type: "refresh_token",
-      refresh_token,
+      grant_type: "client_credentials",
     }),
+    headers: {
+      "Content-Type": "application/x-www-form-urlencoded",
+      Authorization:
+        "Basic " +
+        Buffer.from(client_id + ":" + client_secret).toString("base64"),
+    },
+    cache: "no-cache",
   });
 
-  return response.json();
+  return res.json();
 };
 
 export const searchArtist = async (
@@ -54,18 +57,60 @@ export const getTopTracksByArtist = async (
 };
 
 export const getTracksByArtist = async (
-  artistName: string
+  artistName: string,
+  page: number
 ): Promise<SearchTracks> => {
   const { access_token } = await getAccessToken();
+  const offset = page * 50;
 
-  const response = await fetch(
-    `https://api.spotify.com/v1/search?q=${artistName}&type=track&limit=40`,
-    {
-      headers: {
-        Authorization: `Bearer ${access_token}`,
-      },
-    }
-  );
+  const url = `https://api.spotify.com/v1/search?q=${artistName}&type=track&limit=50&offset=${offset}`;
+
+  const response = await fetch(url, {
+    headers: {
+      Authorization: `Bearer ${access_token}`,
+    },
+  });
+
+  if (!response.ok) {
+    return { total: 0, tracks: { items: [] } };
+  }
 
   return response.json();
+};
+
+export const getTracks = async (
+  artistId: string,
+  artistName: string
+): Promise<Track[]> => {
+  const topTracksPromise = getTopTracksByArtist(artistId);
+  const formattedArtistName = artistName.replaceAll("%20", "+");
+
+  const additionalTracksPromise1 = getTracksByArtist(formattedArtistName, 0);
+  const additionalTracksPromise2 = getTracksByArtist(formattedArtistName, 1);
+
+  const [
+    { tracks: topTracks },
+    {
+      tracks: { items: additionalTracks1 },
+    },
+    {
+      tracks: { items: additionalTracks2 },
+    },
+  ] = await Promise.all([
+    topTracksPromise,
+    additionalTracksPromise1,
+    additionalTracksPromise2,
+  ]);
+
+  const popularTracks = [
+    ...getPopularTracks(additionalTracks1),
+    ...getPopularTracks(additionalTracks2),
+  ];
+
+  const concatenatedTracks: Track[] = concatenateTracks(
+    topTracks,
+    popularTracks
+  );
+
+  return concatenatedTracks;
 };

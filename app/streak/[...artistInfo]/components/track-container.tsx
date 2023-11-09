@@ -12,6 +12,7 @@ export const TrackContainer = ({ tracks }: TrackContainerProps) => {
   const [start, setStart] = useState(false);
 
   useEffect(() => {
+    console.log(tracks);
     const randomTrack = getRandomSongFromTracks();
     setCurrentTrack(randomTrack);
   }, []);
@@ -24,7 +25,6 @@ export const TrackContainer = ({ tracks }: TrackContainerProps) => {
       randomTrack = tracks[randomIndex];
       if (randomTrack) tracks.splice(randomIndex, 1);
     }
-    console.log(randomTrack.name);
     return randomTrack;
   };
 

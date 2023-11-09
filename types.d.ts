@@ -139,6 +139,7 @@ type Track = {
 };
 
 type SearchTracks = {
+  total: number;
   tracks: {
     items: Track[];
   };

@@ -56,7 +56,7 @@ export const SearchArtistInput = () => {
   const onClickStartHandler = () => {
     if (artist === undefined) return;
 
-    router.push(`/streak/${artist.id}/${artist.name.replaceAll(" ", "+")}`);
+    router.push(`/streak/${artist.id}/${artist.name.toLowerCase()}`);
   };
 
   return (
