@@ -15,7 +15,7 @@ export const getAccessToken = async () => {
         "Basic " +
         Buffer.from(client_id + ":" + client_secret).toString("base64"),
     },
-    cache: "no-cache",
+    next: { revalidate: 3300 },
   });
 
   return res.json();
