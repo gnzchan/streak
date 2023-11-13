@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { TrackPlayer } from "./track-player";
 
 interface TrackContainerProps {
@@ -10,12 +10,25 @@ interface TrackContainerProps {
 export const TrackContainer = ({ tracks }: TrackContainerProps) => {
   const [currentTrack, setCurrentTrack] = useState<Track>();
   const [start, setStart] = useState(false);
+  const playerRef = useRef<HTMLAudioElement>(null);
+
+  const [score, setScore] = useState(0);
+
+  const [guessString, setGuessString] = useState("");
 
   useEffect(() => {
-    console.log(tracks);
     const randomTrack = getRandomSongFromTracks();
+    console.log(tracks.length);
+    console.log(tracks);
+    console.log(randomTrack.name);
+    console.log(randomTrack);
     setCurrentTrack(randomTrack);
-  }, []);
+
+    if (start) {
+      playerRef.current?.load();
+      playerRef.current?.play();
+    }
+  }, [score, start]);
 
   // Get random song from Tracks array and remove it from array if chosen
   const getRandomSongFromTracks = () => {
@@ -28,13 +41,29 @@ export const TrackContainer = ({ tracks }: TrackContainerProps) => {
     return randomTrack;
   };
 
+  const onChangeInput = (e: ChangeEvent<HTMLInputElement>) => {
+    const value = e.currentTarget.value;
+    setGuessString(value);
+    if (value === currentTrack?.name.toLocaleLowerCase()) {
+      setScore((prevScore) => prevScore + 1);
+      setGuessString("");
+    }
+  };
+
   return (
     <div className="flex flex-col">
-      {tracks.map((t) => (
-        <div key={t.id}>{t.name}</div>
-      ))}
+      <h3>Current Score</h3>
+      <h1>{score}</h1>
       <button onClick={() => setStart(true)}>Start</button>
-      {start && currentTrack && <TrackPlayer track={currentTrack} />}
+      {start && currentTrack && (
+        <TrackPlayer track={currentTrack} ref={playerRef} />
+      )}
+      <input
+        value={guessString}
+        className="bg-slate-500 w-full"
+        placeholder="Song title"
+        onChange={onChangeInput}
+      />
     </div>
   );
 };

@@ -23,6 +23,7 @@ export const getPopularTracks = (tracks: Track[]): Track[] => {
 };
 
 export const concatenateTracks = (
+  artistId: string,
   topTracks: Track[],
   popularTracks: Track[]
 ) => {
@@ -30,11 +31,25 @@ export const concatenateTracks = (
   const uniqueTracks: { [key: string]: Track } = {};
 
   tracks.forEach((track) => {
-    if (!uniqueTracks[track.id]) {
+    if (
+      !uniqueTracks[track.id] &&
+      track.artists[0].id === artistId &&
+      !!track.preview_url
+    ) {
       uniqueTracks[track.id] = track;
     }
   });
 
   // Convert the uniqueItems object back to an array.
   return Object.values(uniqueTracks);
+};
+
+export const cleanTrackTitles = (tracks: Track[]) => {
+  const pattern = /\([^)]*\)|\([^’]*\)|\s*-\s*.*/g;
+  const cleanedTitleTracks = tracks.map((track) => ({
+    ...track,
+    name: track.name.replace(pattern, "").trim(),
+  }));
+
+  return cleanedTitleTracks;
 };

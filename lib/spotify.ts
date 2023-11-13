@@ -1,4 +1,4 @@
-import { concatenateTracks, getPopularTracks } from "./utils";
+import { cleanTrackTitles, concatenateTracks, getPopularTracks } from "./utils";
 
 export const getAccessToken = async () => {
   const client_id = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID ?? "";
@@ -108,9 +108,12 @@ export const getTracks = async (
   ];
 
   const concatenatedTracks: Track[] = concatenateTracks(
+    artistId,
     topTracks,
     popularTracks
   );
 
-  return concatenatedTracks;
+  const cleanedTrackTitles: Track[] = cleanTrackTitles(concatenatedTracks);
+
+  return cleanedTrackTitles;
 };

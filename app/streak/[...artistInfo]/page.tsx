@@ -1,8 +1,4 @@
-import {
-  getTopTracksByArtist,
-  getTracks,
-  getTracksByArtist,
-} from "@/lib/spotify";
+import { getTracks } from "@/lib/spotify";
 import { TrackContainer } from "./components/track-container";
 
 interface StreakPageProps {
