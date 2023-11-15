@@ -1,30 +1,19 @@
+"use server";
+
+import { getServerSession } from "next-auth/next";
 import { cleanTrackTitles, concatenateTracks, getPopularTracks } from "./utils";
+import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export const getAccessToken = async () => {
-  const client_id = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_ID ?? "";
-  const client_secret = process.env.NEXT_PUBLIC_SPOTIFY_CLIENT_SECRET ?? "";
+  const { token: access_token } = await getServerSession(authOptions);
 
-  const res = await fetch("https://accounts.spotify.com/api/token", {
-    method: "POST",
-    body: new URLSearchParams({
-      grant_type: "client_credentials",
-    }),
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-      Authorization:
-        "Basic " +
-        Buffer.from(client_id + ":" + client_secret).toString("base64"),
-    },
-    next: { revalidate: 3300 },
-  });
-
-  return res.json();
+  return access_token;
 };
 
 export const searchArtist = async (
   formattedSearchString: string
 ): Promise<SearchArtists> => {
-  const { access_token } = await getAccessToken();
+  const access_token = await getAccessToken();
 
   const response = await fetch(
     `https://api.spotify.com/v1/search?q=${formattedSearchString}&type=artist`,
@@ -41,7 +30,7 @@ export const searchArtist = async (
 export const getTopTracksByArtist = async (
   artistId: string
 ): Promise<TopTracks> => {
-  const { access_token } = await getAccessToken();
+  const access_token = await getAccessToken();
 
   // TODO: Market should be based on where app is ran.
   const response = await fetch(
@@ -60,7 +49,7 @@ export const getTracksByArtist = async (
   artistName: string,
   page: number
 ): Promise<SearchTracks> => {
-  const { access_token } = await getAccessToken();
+  const access_token = await getAccessToken();
   const offset = page * 50;
 
   const url = `https://api.spotify.com/v1/search?q=${artistName}&type=track&limit=50&offset=${offset}`;
