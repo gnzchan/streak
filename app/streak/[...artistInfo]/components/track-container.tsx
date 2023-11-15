@@ -2,6 +2,7 @@
 
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { TrackPlayer } from "./track-player";
+import { useTimer } from "@/hooks/useTimer";
 
 interface TrackContainerProps {
   tracks: Track[];
@@ -23,9 +24,7 @@ export const TrackContainer = (props: TrackContainerProps) => {
   const [tracks, setTracks] = useState<Track[]>(props.tracks.slice(0, 5));
   const [currentTrack, setCurrentTrack] = useState<Track>();
   const [guessString, setGuessString] = useState("");
-
-  const [timer, setTimer] = useState(15);
-  const [timeoutId, setTimeoutId] = useState<NodeJS.Timeout>();
+  const { timer, setTimer } = useTimer({ gameStatus, setGameStatus });
 
   useEffect(() => {
     if (gameStatus === GameStatus.STARTED) {
@@ -40,26 +39,6 @@ export const TrackContainer = (props: TrackContainerProps) => {
       }
     }
   }, [score, gameStatus]);
-
-  useEffect(() => {
-    if (gameStatus === GameStatus.STARTED) {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-
-      const newTimeoutId = setTimeout(
-        () => setTimer((prevTime) => prevTime - 1),
-        1000
-      );
-
-      setTimeoutId(newTimeoutId);
-
-      if (timer === 0) {
-        setGameStatus(GameStatus.COMPLETED);
-        return clearTimeout(newTimeoutId);
-      }
-    }
-  }, [timer, gameStatus]);
 
   // Get random song from Tracks array and remove it from array if chosen
   const pickRandomTrack = () => {
