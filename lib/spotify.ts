@@ -5,8 +5,7 @@ import { cleanTrackTitles, concatenateTracks, getPopularTracks } from "./utils";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export const getAccessToken = async () => {
-  const { token: access_token } = await getServerSession(authOptions);
-
+  const { accessToken: access_token } = await getServerSession(authOptions);
   return access_token;
 };
 

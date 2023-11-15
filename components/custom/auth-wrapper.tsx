@@ -6,7 +6,7 @@ import { useSession, signIn, signOut } from "next-auth/react";
 export const AuthWrapper = () => {
   const session = useSession();
 
-  console.log(session?.data);
+  // console.log(session?.data);
 
   return (
     <>
