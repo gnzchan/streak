@@ -13,6 +13,7 @@ datasource db {
 model User {
   id              Int               @id @default(autoincrement())
   userId          String            @unique
+  email           String            @unique
   name            String
   // Add other user-related fields as needed
   UserArtistScore UserArtistScore[]
