@@ -41,17 +41,19 @@ export async function POST(req: Request) {
     });
 
     if (userArtistScore) {
-      await prismadb.userArtistScore.update({
-        where: {
-          userId_artistId: {
-            userId,
-            artistId,
+      if (score > userArtistScore) {
+        await prismadb.userArtistScore.update({
+          where: {
+            userId_artistId: {
+              userId,
+              artistId,
+            },
           },
-        },
-        data: {
-          score,
-        },
-      });
+          data: {
+            score,
+          },
+        });
+      }
     } else {
       await prismadb.userArtistScore.create({
         data: {
