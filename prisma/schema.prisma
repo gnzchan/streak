@@ -1,0 +1,40 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id              Int               @id @default(autoincrement())
+  userId          String            @unique
+  name            String
+  // Add other user-related fields as needed
+  UserArtistScore UserArtistScore[]
+}
+
+model Artist {
+  id              Int               @id @default(autoincrement())
+  artistId        String            @unique
+  name            String
+  // Add other artist-related fields as needed
+  UserArtistScore UserArtistScore[]
+}
+
+model UserArtistScore {
+  id       Int    @id @default(autoincrement())
+  userId   String
+  artistId String
+  score    Int
+  // Define foreign keys
+  user     User   @relation(fields: [userId], references: [userId])
+  artist   Artist @relation(fields: [artistId], references: [artistId])
+
+  // Add other fields as needed
+  @@unique([userId, artistId])
+}
