@@ -5,20 +5,20 @@ import { cleanTrackTitles, concatenateTracks, getPopularTracks } from "./utils";
 import { authOptions } from "@/app/api/auth/[...nextauth]/route";
 
 export const getAccessToken = async () => {
-  const accessToken = await getServerSession(authOptions);
-  return accessToken.access_token ?? "";
+  const { accessToken } = await getServerSession(authOptions);
+  return accessToken;
 };
 
 export const searchArtist = async (
   formattedSearchString: string
 ): Promise<SearchArtists> => {
-  const access_token = await getAccessToken();
+  const accessToken = await getAccessToken();
 
   const response = await fetch(
     `https://api.spotify.com/v1/search?q=${formattedSearchString}&type=artist`,
     {
       headers: {
-        Authorization: `Bearer ${access_token}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     }
   );
@@ -29,14 +29,14 @@ export const searchArtist = async (
 export const getTopTracksByArtist = async (
   artistId: string
 ): Promise<TopTracks> => {
-  const access_token = await getAccessToken();
+  const accessToken = await getAccessToken();
 
   // TODO: Market should be based on where app is ran.
   const response = await fetch(
     `https://api.spotify.com/v1/artists/${artistId}/top-tracks?market=us`,
     {
       headers: {
-        Authorization: `Bearer ${access_token}`,
+        Authorization: `Bearer ${accessToken}`,
       },
     }
   );
@@ -48,14 +48,14 @@ export const getTracksByArtist = async (
   artistName: string,
   page: number
 ): Promise<SearchTracks> => {
-  const access_token = await getAccessToken();
+  const accessToken = await getAccessToken();
   const offset = page * 50;
 
   const url = `https://api.spotify.com/v1/search?q=${artistName}&type=track&limit=50&offset=${offset}`;
 
   const response = await fetch(url, {
     headers: {
-      Authorization: `Bearer ${access_token}`,
+      Authorization: `Bearer ${accessToken}`,
     },
   });
 

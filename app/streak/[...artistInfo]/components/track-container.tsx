@@ -1,11 +1,15 @@
 "use client";
 
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { useSession } from "next-auth/react";
+
 import { TrackPlayer } from "./track-player";
 import { useTimer } from "@/hooks/useTimer";
 
 interface TrackContainerProps {
   tracks: Track[];
+  artistId: string;
+  artistName: string;
 }
 
 enum GameStatus {
@@ -15,6 +19,7 @@ enum GameStatus {
 }
 
 export const TrackContainer = (props: TrackContainerProps) => {
+  const session = useSession();
   const [gameStatus, setGameStatus] = useState<GameStatus>(
     GameStatus.NOT_STARTED
   );
@@ -37,6 +42,16 @@ export const TrackContainer = (props: TrackContainerProps) => {
       } else {
         setGameStatus(GameStatus.COMPLETED);
       }
+    } else if (gameStatus === GameStatus.COMPLETED) {
+      fetch("/api/score", {
+        method: "POST",
+        body: JSON.stringify({
+          userId: session?.data?.user.id,
+          artistId: props.artistId,
+          artistName: decodeURIComponent(props.artistName),
+          score,
+        }),
+      });
     }
   }, [score, gameStatus]);
 

@@ -41,7 +41,6 @@ export const SearchArtistInput = () => {
         .trim()
         .replaceAll(" ", "+");
       const { artists } = await searchArtist(formattedSearchString);
-
       setSearchedArtistResult(artists.items);
     };
 

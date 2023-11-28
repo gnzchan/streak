@@ -12,7 +12,11 @@ const StreakPage = async ({ params }: StreakPageProps) => {
 
   return (
     <div>
-      <TrackContainer tracks={tracks} />
+      <TrackContainer
+        tracks={tracks}
+        artistId={params.artistInfo[0]}
+        artistName={params.artistInfo[1]}
+      />
     </div>
   );
 };
