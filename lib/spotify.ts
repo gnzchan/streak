@@ -2,7 +2,7 @@
 
 import { getServerSession } from "next-auth/next";
 import { cleanTrackTitles, concatenateTracks, getPopularTracks } from "./utils";
-import { authOptions } from "@/app/api/auth/[...nextauth]/route";
+import { authOptions } from "@/lib/auth-options";
 
 export const getAccessToken = async () => {
   const { accessToken } = await getServerSession(authOptions);

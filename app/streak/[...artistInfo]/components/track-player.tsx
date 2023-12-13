@@ -15,3 +15,5 @@ export const TrackPlayer = forwardRef<HTMLAudioElement, TrackPlayerProps>(
     );
   }
 );
+
+TrackPlayer.displayName = "TrackPlayer";
