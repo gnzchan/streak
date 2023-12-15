@@ -6,9 +6,9 @@ interface MainPageProps {
 
 export const MainPage = ({ children }: MainPageProps) => {
   return (
-    <>
+    <main className="flex flex-col">
       <TopBar />
       {children}
-    </>
+    </main>
   );
 };
