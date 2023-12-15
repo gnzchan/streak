@@ -33,27 +33,35 @@ export const TrackContainer = (props: TrackContainerProps) => {
 
   useEffect(() => {
     if (gameStatus === GameStatus.STARTED) {
-      const randomTrack = pickRandomTrack();
-      if (randomTrack) {
-        setCurrentTrack(randomTrack);
-
-        playerRef.current?.load();
-        playerRef.current?.play();
-      } else {
-        setGameStatus(GameStatus.COMPLETED);
-      }
+      startRound();
     } else if (gameStatus === GameStatus.COMPLETED) {
-      fetch("/api/score", {
-        method: "POST",
-        body: JSON.stringify({
-          userId: session?.data?.user.id,
-          artistId: props.artistId,
-          artistName: decodeURIComponent(props.artistName),
-          score,
-        }),
-      });
+      saveScore();
     }
   }, [score, gameStatus]);
+
+  const startRound = () => {
+    const randomTrack = pickRandomTrack();
+    if (randomTrack) {
+      setCurrentTrack(randomTrack);
+
+      playerRef.current?.load();
+      playerRef.current?.play();
+    } else {
+      setGameStatus(GameStatus.COMPLETED);
+    }
+  };
+
+  const saveScore = () => {
+    fetch("/api/score", {
+      method: "POST",
+      body: JSON.stringify({
+        userId: session?.data?.user.id,
+        artistId: props.artistId,
+        artistName: decodeURIComponent(props.artistName),
+        score,
+      }),
+    });
+  };
 
   // Get random song from Tracks array and remove it from array if chosen
   const pickRandomTrack = () => {
