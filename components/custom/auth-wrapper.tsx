@@ -23,9 +23,12 @@ export const AuthWrapper = () => {
   return (
     <>
       {session?.data ? (
-        <span onClick={() => signOut()}> Sign out </span>
+        <span onClick={() => signOut({ callbackUrl: "/" })}> Sign out </span>
       ) : (
-        <span onClick={() => signIn("spotify")}> Sign in with Spotify </span>
+        <span onClick={() => signIn("spotify", { callbackUrl: "/dashboard" })}>
+          {" "}
+          Sign in with Spotify{" "}
+        </span>
       )}
     </>
   );
